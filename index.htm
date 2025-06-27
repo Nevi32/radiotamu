@@ -3,11 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Kenyan Radio Player</title>
+  <title>Classic 105 FM - TuneIn Player</title>
   <style>
     body {
       font-family: Arial, sans-serif;
-      background: #f0f2f5;
+      background: #f9f9f9;
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -17,38 +17,33 @@
       padding: 20px;
     }
     h1 {
-      color: #333;
+      color: #222;
       margin-bottom: 20px;
     }
-    .player-container {
-      background: white;
-      padding: 20px 30px;
-      border-radius: 8px;
-      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-      text-align: center;
-      width: 320px;
-    }
-    audio {
+    .player-wrapper {
       width: 100%;
-      outline: none;
-      border-radius: 4px;
-      margin-top: 15px;
+      max-width: 400px;
+      height: 100px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      border-radius: 8px;
+      overflow: hidden;
     }
-    p {
-      margin-top: 10px;
-      color: #555;
-      font-size: 14px;
+    iframe {
+      border: none;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <div class="player-container">
-    <h1>Classic 105 FM - Kenya</h1>
-    <audio controls autoplay>
-      <iframe src="https://tunein.com/embed/player/s152433/" style="width:100%; height:100px;" scrolling="no" frameborder="no"></iframe> />
-      Your browser does not support the audio element.
-    </audio>
-    <p>Listen to Classic 105 live online</p>
+  <h1>Classic 105 FM - Kenya (via TuneIn)</h1>
+  <div class="player-wrapper">
+    <iframe 
+      src="https://tunein.com/embed/player/s152433/" 
+      scrolling="no" 
+      frameborder="no" 
+      allow="autoplay">
+    </iframe>
   </div>
 </body>
 </html>
