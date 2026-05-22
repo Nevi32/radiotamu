@@ -1,687 +1,786 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Classic 105 FM - Persistent Widget</title>
-  <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIkNsYXNzaWMgMTA1IEZNIFJhZGlvIiwKICAic2hvcnRfbmFtZSI6ICJDbGFzc2ljMTA1IiwKICAiZGVzY3JpcHRpb24iOiAiS2VueWEncyBDbGFzc2ljIDEwNSBGTSBSYWRpbyBTdGF0aW9uIiwKICAic3RhcnRfdXJsIjogIi8iLAogICJkaXNwbGF5IjogInN0YW5kYWxvbmUiLAogICJiYWNrZ3JvdW5kX2NvbG9yIjogIiMyMjIyMjIiLAogICJ0aGVtZV9jb2xvciI6ICIjZmY2NjAwIiwKICAiaWNvbnMiOiBbCiAgICB7CiAgICAgICJzcmMiOiAiZGF0YTppbWFnZS9zdmcreG1sO2Jhc2U2NCxQSE4yWnlCM2FXUjBhRDBpTkRnaUlHaGxhV2RvZEQwaU5EZ2lJSFpwWlhkQ2IzZzlJakFnTUNBME9DQTBPQ0lnWm1sc2JEMGlJMlptTmpZd01DSStQR05wY21Oc1pTQmplRDBpTWpRaUlHTjVQU0l5TkNJZ2NqMGlNVGdpSUdacGJHdzlJaU5tWmpZMk1EQWlMejQ4Y0dGMGFDQmtQU0pOTVRJZ01USXNNVElzTWpRdU1UWXNNakkwTGpFMkxESXlMakkwTGpFMkxESXlMRFJUTWpJdE1USXNNVElzTVRKNklpQm1hV3hzUFNJalptWTJOakF3SWk4K1BIQmhkR2dnWkQwaVRUSXlMRGt1TmpRc01qSXNNVGM0VERFeExqTTJMRE0yVERndU5qUXNNaklzT1M0Mk5DSXVJQ0JtYVd4c1BTSWpabVkyTmpBd0lpOCtQQzl6ZG1jKyIsCiAgICAgICJzaXplcyI6ICI0OHg0OCIsCiAgICAgICJ0eXBlIjogImltYWdlL3N2Zyt4bWwiCiAgICB9CiAgXQp9">
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>IMFUYO SMS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:ital,wght@0,400;0,700;1,400&family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      color: white;
-      overflow: hidden;
-    }
+:root {
+  --ink:    #0e0e0e;
+  --paper:  #f4f1eb;
+  --cream:  #ede9e0;
+  --rule:   #d4cfc4;
+  --mid:    #8a857a;
+  --green:  #1d6a45;
+  --red:    #b5320e;
+  --amber:  #b06600;
+  --blue:   #1a4e82;
+  --accent: #d4401a;
+  --r: 10px;
+  --sh: 0 2px 16px rgba(0,0,0,.07);
+}
 
-    .widget-container {
-      width: 100vw;
-      height: 100vh;
-      display: flex;
-      flex-direction: column;
-      position: relative;
-    }
+html, body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'DM Sans', sans-serif;
+  min-height: 100vh;
+}
 
-    .header {
-      background: rgba(0, 0, 0, 0.3);
-      padding: 10px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      backdrop-filter: blur(10px);
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-    }
+/* ── Noise texture overlay ── */
+body::before {
+  content: '';
+  position: fixed; inset: 0; pointer-events: none; z-index: 999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.03'/%3E%3C/svg%3E");
+  opacity: .5;
+}
 
-    .station-info {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+.shell { max-width: 1120px; margin: 0 auto; padding: 0 24px 80px; }
 
-    .station-logo {
-      width: 32px;
-      height: 32px;
-      background: #ff6600;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      font-size: 12px;
-    }
+/* ── Header ── */
+header {
+  border-bottom: 2px solid var(--ink);
+  padding: 32px 0 22px;
+  display: flex; align-items: flex-end; gap: 20px;
+  margin-bottom: 40px; flex-wrap: wrap;
+}
+.brand {
+  display: flex; align-items: flex-end; gap: 14px;
+}
+.brand-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.2rem; line-height: .9; letter-spacing: .05em;
+  color: var(--ink);
+}
+.brand-logo span { color: var(--accent); }
+.brand-sub {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .14em;
+  color: var(--mid); padding-bottom: 5px; line-height: 1.5;
+}
 
-    .station-name {
-      font-size: 14px;
-      font-weight: 600;
-    }
+#balance-btn {
+  margin-left: auto;
+  background: var(--ink); color: var(--paper);
+  font-family: 'Space Mono', monospace; font-size: .7rem;
+  letter-spacing: .08em; text-transform: uppercase;
+  padding: 10px 18px; border: none; border-radius: 6px;
+  cursor: pointer; transition: opacity .2s; white-space: nowrap;
+}
+#balance-btn:hover { opacity: .75; }
 
-    .controls {
-      display: flex;
-      gap: 10px;
-      align-items: center;
-    }
+/* ── Grid ── */
+.grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+@media(max-width:740px){ .grid{ grid-template-columns: 1fr; } }
+.full { grid-column: 1/-1; }
+.mt   { margin-top: 24px; }
 
-    .btn {
-      background: rgba(255, 255, 255, 0.2);
-      border: none;
-      color: white;
-      width: 32px;
-      height: 32px;
-      border-radius: 6px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all 0.3s ease;
-      font-size: 14px;
-    }
+/* ── Card ── */
+.card {
+  background: #fff; border: 1.5px solid var(--rule);
+  border-radius: var(--r); padding: 26px;
+  box-shadow: var(--sh);
+}
+.card-title {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem; text-transform: uppercase; letter-spacing: .15em;
+  color: var(--mid); margin-bottom: 16px;
+  display: flex; align-items: center; gap: 8px;
+}
+.card-title::after {
+  content: ''; flex: 1; height: 1px; background: var(--rule);
+}
 
-    .btn:hover {
-      background: rgba(255, 255, 255, 0.3);
-      transform: scale(1.05);
-    }
+/* ── Compose ── */
+textarea {
+  width: 100%; min-height: 150px; resize: vertical;
+  border: 1.5px solid var(--rule); border-radius: 8px;
+  padding: 14px; font-family: 'DM Sans', sans-serif; font-size: .88rem;
+  line-height: 1.7; background: var(--paper); color: var(--ink);
+  outline: none; transition: border-color .2s;
+}
+textarea:focus { border-color: var(--ink); }
+.char-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 8px; font-family: 'Space Mono', monospace; font-size: .65rem;
+  color: var(--mid);
+}
+.char-row.warn { color: var(--red); }
 
-    .btn.active {
-      background: #ff6600;
-    }
+/* ── Chips ── */
+.chips-label {
+  font-family: 'Space Mono', monospace; font-size: .62rem;
+  text-transform: uppercase; letter-spacing: .1em; color: var(--mid);
+  margin-top: 16px; margin-bottom: 9px;
+}
+.chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.chip {
+  background: var(--cream); border: 1.5px solid var(--rule);
+  border-radius: 20px; padding: 5px 12px;
+  font-family: 'Space Mono', monospace; font-size: .65rem;
+  cursor: pointer; transition: all .15s; user-select: none;
+  display: inline-flex; align-items: center; gap: 4px;
+}
+.chip:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); transform: translateY(-1px); }
+.chip-hint { font-size: .65rem; color: var(--mid); font-style: italic; margin-top: 8px; }
 
-    .main-content {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
-    }
+/* ── Drop zone ── */
+.drop-zone {
+  border: 2px dashed var(--rule); border-radius: 8px;
+  padding: 36px 16px; text-align: center; cursor: pointer;
+  position: relative; transition: all .2s;
+}
+.drop-zone:hover, .drop-zone.drag {
+  border-color: var(--ink); background: var(--cream);
+}
+.drop-zone input[type=file] {
+  position: absolute; inset: 0; opacity: 0; cursor: pointer;
+  width: 100%; height: 100%;
+}
+.drop-icon { font-size: 2.2rem; margin-bottom: 10px; }
+.drop-label { font-size: .8rem; color: var(--mid); line-height: 1.6; }
 
-    .now-playing {
-      text-align: center;
-      margin-bottom: 30px;
-    }
+/* ── Toggle ── */
+.toggle-row {
+  display: flex; align-items: center; gap: 10px;
+  margin-top: 16px; font-size: .8rem;
+}
+.toggle {
+  width: 38px; height: 21px; background: var(--rule);
+  border-radius: 21px; position: relative; cursor: pointer;
+  transition: background .2s; flex-shrink: 0;
+}
+.toggle.on { background: var(--ink); }
+.toggle::after {
+  content:''; position: absolute;
+  width: 15px; height: 15px; background: white;
+  border-radius: 50%; top: 3px; left: 3px; transition: left .2s;
+}
+.toggle.on::after { left: 20px; }
 
-    .now-playing h2 {
-      font-size: 18px;
-      margin-bottom: 8px;
-      opacity: 0.9;
-    }
+/* ── Preview ── */
+#preview-section { display: none; animation: fadeIn .3s ease; }
+@keyframes fadeIn { from { opacity:0; transform: translateY(6px); } to { opacity:1; transform:none; } }
 
-    .song-title {
-      font-size: 24px;
-      font-weight: 700;
-      margin-bottom: 5px;
-      text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-    }
+.preview-card {
+  background: var(--paper); border: 1.5px solid var(--rule);
+  border-radius: 8px; padding: 14px 16px; margin-bottom: 10px;
+}
+.preview-meta {
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .08em;
+  color: var(--mid); margin-bottom: 8px;
+}
+.preview-msg { font-size: .84rem; line-height: 1.7; white-space: pre-wrap; }
+.preview-more { font-size: .7rem; color: var(--mid); font-style: italic; margin-top: 6px; }
 
-    .artist-name {
-      font-size: 16px;
-      opacity: 0.8;
-    }
+/* ── Table ── */
+.table-wrap {
+  overflow-x: auto; border: 1.5px solid var(--rule);
+  border-radius: 8px; margin-top: 10px;
+}
+table { width: 100%; border-collapse: collapse; font-size: .76rem; }
+th {
+  background: var(--ink); color: var(--paper);
+  padding: 10px 14px; text-align: left;
+  font-family: 'Space Mono', monospace;
+  font-size: .62rem; letter-spacing: .08em; white-space: nowrap;
+}
+td {
+  padding: 9px 14px; border-bottom: 1px solid var(--rule);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:nth-child(even) td { background: var(--paper); }
 
-    .player-controls {
-      display: flex;
-      gap: 20px;
-      align-items: center;
-      margin-bottom: 30px;
-    }
+/* ── Badges ── */
+.badge {
+  display: inline-block; padding: 3px 10px;
+  border-radius: 20px; font-family: 'Space Mono', monospace;
+  font-size: .6rem; background: var(--cream); white-space: nowrap;
+}
+.badge-ok     { background: #d4f0e2; color: #0e4a2a; }
+.badge-fail   { background: #fce4df; color: #7a1a08; }
+.badge-other  { background: #fdf3d9; color: #6b4200; }
+.badge-sending{ background: #dceeff; color: #0f305e; }
 
-    .play-btn {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, #ff6600, #ff8533);
-      border: none;
-      color: white;
-      font-size: 24px;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 8px 16px rgba(255, 102, 0, 0.3);
-      transition: all 0.3s ease;
-    }
+/* ── Stats ── */
+.stats { display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 22px; }
+.stat {
+  flex: 1; min-width: 110px; background: #fff;
+  border: 1.5px solid var(--rule); border-radius: 8px;
+  padding: 16px 18px; box-shadow: var(--sh);
+}
+.stat-n {
+  font-family: 'Bebas Neue', sans-serif; font-size: 2.4rem;
+  line-height: 1;
+}
+.stat-l {
+  font-family: 'Space Mono', monospace;
+  font-size: .6rem; color: var(--mid);
+  text-transform: uppercase; letter-spacing: .1em; margin-top: 4px;
+}
+.stat.green .stat-n { color: var(--green); }
+.stat.red   .stat-n { color: var(--red); }
+.stat.amber .stat-n { color: var(--amber); }
+.stat.blue  .stat-n { color: var(--blue); }
 
-    .play-btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0 12px 24px rgba(255, 102, 0, 0.4);
-    }
+/* ── Send button ── */
+.send-btn {
+  width: 100%; padding: 16px;
+  background: var(--accent); color: white;
+  border: none; border-radius: 8px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem; letter-spacing: .12em;
+  cursor: pointer; transition: opacity .2s, transform .1s;
+  margin-top: 22px;
+}
+.send-btn:hover:not(:disabled) { opacity: .86; }
+.send-btn:active { transform: scale(.99); }
+.send-btn:disabled { opacity: .35; cursor: not-allowed; }
 
-    .volume-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
+/* ── Progress ── */
+#progress-wrap { display: none; margin-top: 14px; }
+.prog-outer {
+  background: var(--cream); border-radius: 8px; height: 6px; overflow: hidden;
+}
+.prog-inner {
+  background: var(--accent); height: 100%; width: 0%;
+  transition: width .3s ease; border-radius: 8px;
+}
+.prog-label {
+  font-family: 'Space Mono', monospace;
+  font-size: .65rem; color: var(--mid); margin-top: 7px;
+}
 
-    .volume-slider {
-      width: 100px;
-      height: 4px;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 2px;
-      outline: none;
-      -webkit-appearance: none;
-    }
+/* ── Log ── */
+#log { margin-top: 26px; border: 1.5px solid var(--rule); border-radius: var(--r); overflow: hidden; display: none; }
+#log-header {
+  background: var(--ink); color: var(--paper);
+  padding: 10px 16px; font-family: 'Space Mono', monospace;
+  font-size: .65rem; letter-spacing: .1em; text-transform: uppercase;
+  display: flex; justify-content: space-between;
+}
+#log-body { max-height: 360px; overflow-y: auto; font-size: .76rem; }
+.log-row {
+  display: grid; grid-template-columns: 26px 1fr auto;
+  gap: 12px; padding: 9px 16px;
+  border-bottom: 1px solid var(--rule); align-items: start;
+}
+.log-row:last-child { border-bottom: none; }
+.log-num { color: var(--mid); font-size: .62rem; padding-top: 2px; font-family: 'Space Mono', monospace; }
+.log-title { font-weight: 600; display: block; margin-bottom: 2px; }
+.log-detail { font-size: .72rem; color: var(--mid); }
+.log-time { font-family: 'Space Mono', monospace; font-size: .62rem; color: var(--mid); text-align: right; white-space: nowrap; }
+.ok   { color: var(--green); }
+.err  { color: var(--red); }
+.inf  { color: var(--blue); }
 
-    .volume-slider::-webkit-slider-thumb {
-      width: 16px;
-      height: 16px;
-      background: #ff6600;
-      border-radius: 50%;
-      cursor: pointer;
-      -webkit-appearance: none;
-    }
+/* ── Spinner ── */
+.spinner {
+  display: inline-block; width: 14px; height: 14px;
+  border: 2px solid rgba(255,255,255,.3); border-top-color: #fff;
+  border-radius: 50%; animation: spin .7s linear infinite;
+  vertical-align: middle; margin-right: 6px;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
 
-    .visualizer {
-      display: flex;
-      gap: 3px;
-      align-items: end;
-      height: 40px;
-    }
-
-    .bar {
-      width: 4px;
-      background: linear-gradient(to top, #ff6600, #ffaa66);
-      border-radius: 2px;
-      animation: bounce 1s infinite ease-in-out;
-    }
-
-    .bar:nth-child(2) { animation-delay: -0.9s; }
-    .bar:nth-child(3) { animation-delay: -0.8s; }
-    .bar:nth-child(4) { animation-delay: -0.7s; }
-    .bar:nth-child(5) { animation-delay: -0.6s; }
-    .bar:nth-child(6) { animation-delay: -0.5s; }
-    .bar:nth-child(7) { animation-delay: -0.4s; }
-    .bar:nth-child(8) { animation-delay: -0.3s; }
-
-    @keyframes bounce {
-      0%, 40%, 100% { transform: scaleY(0.4); }
-      20% { transform: scaleY(1); }
-    }
-
-    .status-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(0, 0, 0, 0.3);
-      padding: 8px 15px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 12px;
-      opacity: 0.8;
-    }
-
-    .hidden {
-      display: none !important;
-    }
-
-    .floating-widget {
-      position: fixed;
-      top: 20px;
-      right: 20px;
-      width: 300px;
-      height: 120px;
-      background: rgba(34, 34, 34, 0.95);
-      backdrop-filter: blur(20px);
-      border-radius: 12px;
-      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-      z-index: 10000;
-      transition: all 0.3s ease;
-    }
-
-    @media (max-width: 480px) {
-      .floating-widget {
-        width: 280px;
-        height: 100px;
-        top: 10px;
-        right: 10px;
-      }
-    }
-  </style>
+/* ── Alert ── */
+.alert {
+  padding: 12px 16px; border-radius: 8px; margin-bottom: 18px;
+  font-size: .82rem; display: none;
+}
+.alert.info  { background: #dceeff; color: #0f305e; }
+.alert.error { background: #fce4df; color: #7a1a08; }
+</style>
 </head>
 <body>
-  <div class="widget-container">
-    <div class="header">
-      <div class="station-info">
-        <div class="station-logo">105</div>
-        <div>
-          <div class="station-name">Classic 105 FM</div>
-          <div style="font-size: 11px; opacity: 0.7;">Kenya's Classic Hits</div>
-        </div>
-      </div>
-      <div class="controls">
-        <button class="btn" onclick="toggleWidget()" title="Float Widget">⚏</button>
-        <button class="btn" onclick="toggleAlwaysOnTop()" title="Always On Top">📌</button>
-        <button class="btn" onclick="minimizeWidget()" title="Minimize">−</button>
-        <button class="btn" onclick="closeWidget()" title="Close">×</button>
+<div class="shell">
+
+  <!-- Header -->
+  <header>
+    <div class="brand">
+      <div class="brand-logo">IMF<span>U</span>YO</div>
+      <div class="brand-sub">Bulk SMS<br/>Supabase Edge</div>
+    </div>
+    <button id="balance-btn" onclick="fetchBalance()">⟳ Check Balance</button>
+  </header>
+
+  <div id="alert-bar" class="alert"></div>
+
+  <!-- Main grid -->
+  <div class="grid">
+
+    <!-- Compose -->
+    <div class="card">
+      <div class="card-title">Compose Message</div>
+      <textarea id="msg"
+        placeholder="Type your message… e.g. Hello {{Name}}, your balance is KES {{Amount}}."
+        oninput="onMsgInput()"></textarea>
+      <div class="char-row" id="char-row">0 / 160 characters · 1 SMS</div>
+
+      <div id="chips-area" style="display:none">
+        <div class="chips-label">Insert field →</div>
+        <div class="chips" id="field-chips"></div>
+        <div class="chip-hint">Click a chip to insert {{FieldName}} at the cursor position</div>
       </div>
     </div>
 
-    <div class="main-content">
-      <div class="now-playing">
-        <h2>Now Playing</h2>
-        <div class="song-title" id="songTitle">Classic 105 FM</div>
-        <div class="artist-name" id="artistName">Kenya's Best Classic Hits</div>
-      </div>
-
-      <div class="player-controls">
-        <button class="play-btn" onclick="togglePlay()" id="playBtn">▶</button>
-        <div class="volume-control">
-          <span>🔊</span>
-          <input type="range" class="volume-slider" min="0" max="100" value="70" id="volumeSlider">
+    <!-- Upload -->
+    <div class="card">
+      <div class="card-title">Upload Recipients</div>
+      <div class="drop-zone" id="drop-zone">
+        <input type="file" id="file-input" accept=".csv,.xlsx,.xls"
+               onchange="handleFile(this)"/>
+        <div class="drop-icon">📂</div>
+        <div class="drop-label" id="drop-label">
+          Drop a CSV or Excel file here<br/>or click to browse
         </div>
       </div>
-
-      <div class="visualizer" id="visualizer">
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
-        <div class="bar"></div>
+      <div class="toggle-row">
+        <div class="toggle on" id="toggle-254" onclick="toggleStd()"></div>
+        <span>Auto-add <strong>+254</strong> prefix to numbers</span>
       </div>
     </div>
 
-    <div class="status-bar">
-      <span id="connectionStatus">● LIVE</span>
-      <span id="bitrate">128 kbps</span>
+  </div><!-- /grid -->
+
+  <!-- Preview -->
+  <div id="preview-section" class="card mt full">
+    <div class="card-title">Message Preview — first 3 recipients</div>
+    <div id="preview-list"></div>
+  </div>
+
+  <!-- Recipients table -->
+  <div id="table-section" style="display:none" class="mt">
+    <div class="card">
+      <div class="card-title">Recipients — <span id="rec-count">0</span> loaded</div>
+      <div class="table-wrap">
+        <table id="rec-table">
+          <thead><tr id="rec-thead"></tr></thead>
+          <tbody id="rec-body"></tbody>
+        </table>
+      </div>
     </div>
   </div>
 
-  <!-- Hidden audio element for streaming -->
-  <audio id="radioStream" preload="none">
-    <source src="https://stream.zeno.fm/0r0xa792kwzuv" type="audio/mpeg">
-    <source src="https://ais-sa2.cdnstream1.com/1971_128.mp3" type="audio/mpeg">
-  </audio>
+  <!-- Send -->
+  <button class="send-btn" id="send-btn" onclick="sendSMS()" disabled>
+    Send SMS to All Recipients
+  </button>
+  <div id="progress-wrap">
+    <div class="prog-outer"><div class="prog-inner" id="prog-inner"></div></div>
+    <div class="prog-label" id="prog-label">Preparing…</div>
+  </div>
 
-  <script>
-    let isPlaying = false;
-    let isFloating = false;
-    let popupWindow = null;
-    const audio = document.getElementById('radioStream');
-    const playBtn = document.getElementById('playBtn');
-    const volumeSlider = document.getElementById('volumeSlider');
-    const visualizer = document.getElementById('visualizer');
+  <!-- Stats -->
+  <div class="stats mt" id="stats-row" style="display:none">
+    <div class="stat blue">  <div class="stat-n" id="s-total">0</div><div class="stat-l">Total</div></div>
+    <div class="stat green"> <div class="stat-n" id="s-ok">0</div>   <div class="stat-l">Sent ✓</div></div>
+    <div class="stat red">   <div class="stat-n" id="s-fail">0</div> <div class="stat-l">Failed ✗</div></div>
+    <div class="stat amber"> <div class="stat-n" id="s-other">0</div><div class="stat-l">Pending</div></div>
+  </div>
 
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-      // Set initial volume
-      audio.volume = volumeSlider.value / 100;
-      
-      // Install PWA prompt
-      setupPWA();
-      
-      // Setup media session
-      setupMediaSession();
-      
-      // Check if we can create popup windows
-      checkPopupSupport();
+  <!-- Log -->
+  <div id="log">
+    <div id="log-header">
+      <span>Delivery Log</span>
+      <span id="log-elapsed"></span>
+    </div>
+    <div id="log-body"></div>
+  </div>
+
+</div><!-- /shell -->
+
+<!-- PapaParse for CSV parsing in-browser -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<!-- SheetJS for Excel parsing in-browser -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+// ── State ─────────────────────────────────────────────────────────────────────
+let recipients  = [];
+let columns     = [];
+let mobileCol   = '';
+let nameCol     = '';
+let standardise = true;
+let sendStart   = 0;
+let logCount    = 0;
+
+// ── Config (hard-coded) ────────────────────────────────────────────────────────
+const FUNCTION_URL = 'https://ylvkuxmzakpmeauclpwg.supabase.co/functions/v1/clever-handler';
+const PUBLISHABLE_KEY = 'sb_publishable_vfHzygm6uBMAd-ZP8BuCRw_uu0q5aOJ';
+function getUrl() { return FUNCTION_URL; }
+function getKey() { return PUBLISHABLE_KEY; }
+
+// ── Alert ─────────────────────────────────────────────────────────────────────
+function showAlert(msg, type = 'info') {
+  const el = document.getElementById('alert-bar');
+  el.textContent = msg;
+  el.className   = `alert ${type}`;
+  el.style.display = '';
+  setTimeout(() => el.style.display = 'none', 6000);
+}
+
+// ── Message input ─────────────────────────────────────────────────────────────
+function onMsgInput() {
+  countChars(); updateSendBtn(); renderPreview();
+}
+function countChars() {
+  const v = document.getElementById('msg').value;
+  const n = v.length;
+  const s = Math.ceil(n / 160) || 1;
+  const el = document.getElementById('char-row');
+  el.textContent = `${n} / 160 characters · ${s} SMS (approx.)`;
+  el.classList.toggle('warn', n > 160);
+}
+
+// ── Toggle +254 ───────────────────────────────────────────────────────────────
+function toggleStd() {
+  standardise = !standardise;
+  document.getElementById('toggle-254').classList.toggle('on', standardise);
+  renderTable(); renderPreview();
+}
+function normMobile(raw) {
+  let n = String(raw).replace(/\D/g,'');
+  if (!standardise) return n;
+  if (n.startsWith('0'))                     n = '254' + n.slice(1);
+  if (n.startsWith('7') || n.startsWith('1')) n = '254' + n;
+  if (!n.startsWith('254'))                  n = '254' + n;
+  return n;
+}
+
+// ── Personalise ───────────────────────────────────────────────────────────────
+function personalise(tpl, row) {
+  return tpl.replace(/\{\{([^}]+)\}\}/g, (m, k) => {
+    const key = k.trim().toLowerCase();
+    const col = Object.keys(row).find(c => c.toLowerCase() === key);
+    return col ? row[col] : m;
+  });
+}
+
+// ── File upload (client-side parse) ──────────────────────────────────────────
+function handleFile(input) {
+  const file = input.files[0];
+  if (!file) return;
+  document.getElementById('drop-label').textContent = '⏳ Parsing ' + file.name + '…';
+
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if (ext === 'csv') {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const result = Papa.parse(e.target.result, { header: true, skipEmptyLines: true });
+      loadRows(result.data, result.meta.fields || [], file.name);
+    };
+    reader.readAsText(file);
+  } else if (ext === 'xlsx' || ext === 'xls') {
+    const reader = new FileReader();
+    reader.onload = e => {
+      const wb   = XLSX.read(e.target.result, { type: 'binary' });
+      const ws   = wb.Sheets[wb.SheetNames[0]];
+      const data = XLSX.utils.sheet_to_json(ws, { defval: '' });
+      const cols = data.length ? Object.keys(data[0]) : [];
+      loadRows(data.map(r => Object.fromEntries(Object.entries(r).map(([k,v]) => [k, String(v)]))), cols, file.name);
+    };
+    reader.readAsBinaryString(file);
+  } else {
+    showAlert('Only CSV, XLSX, XLS are supported', 'error');
+  }
+}
+
+function loadRows(rows, cols, fname) {
+  // Clean NaN / empty
+  recipients = rows
+    .map(r => Object.fromEntries(Object.entries(r).map(([k,v]) => [k, v === 'NaN' || v == null ? '' : String(v)])))
+    .filter(r => !Object.values(r).every(v => v === ''));
+  columns    = cols;
+
+  const lc = cols.map(c => c.toLowerCase());
+  nameCol   = cols.find((_, i) => lc[i].includes('name')) || cols[0] || '';
+  mobileCol = cols.find((_, i) => ['phone','mobile','number','tel','msisdn','cell'].some(k => lc[i].includes(k))) || cols[1] || '';
+
+  document.getElementById('drop-label').textContent = `✅ ${fname} — ${recipients.length} rows`;
+  buildChips(); renderTable(); renderPreview(); updateSendBtn();
+}
+
+// ── Chips ─────────────────────────────────────────────────────────────────────
+function buildChips() {
+  const wrap = document.getElementById('field-chips');
+  wrap.innerHTML = '';
+  columns.forEach(col => {
+    const c = document.createElement('span');
+    c.className = 'chip';
+    c.textContent = '+ ' + col;
+    c.title = `Insert {{${col}}}`;
+    c.onclick = () => insertPH(col);
+    wrap.appendChild(c);
+  });
+  document.getElementById('chips-area').style.display = columns.length ? '' : 'none';
+}
+function insertPH(col) {
+  const ta = document.getElementById('msg');
+  const ph = `{{${col}}}`;
+  const s = ta.selectionStart, e = ta.selectionEnd;
+  ta.value = ta.value.slice(0,s) + ph + ta.value.slice(e);
+  ta.selectionStart = ta.selectionEnd = s + ph.length;
+  ta.focus(); onMsgInput();
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+function renderTable() {
+  if (!recipients.length) return;
+  const thead = document.getElementById('rec-thead');
+  thead.innerHTML = '<th>#</th>' + columns.map(c => `<th>${esc(c)}</th>`).join('') +
+    '<th>Status</th><th>Sent At</th><th>Elapsed</th>';
+  const tbody = document.getElementById('rec-body');
+  tbody.innerHTML = '';
+  recipients.forEach((row, i) => {
+    const tr = document.createElement('tr');
+    tr.id = `row-${i}`;
+    let cells = `<td>${i+1}</td>`;
+    columns.forEach(col => {
+      cells += `<td>${esc(col === mobileCol ? normMobile(row[col]) : row[col] || '')}</td>`;
     });
+    cells += `<td><span class="badge" id="badge-${i}">Pending</span></td>`;
+    cells += `<td id="sent-at-${i}" style="font-size:.68rem;color:var(--mid)">—</td>`;
+    cells += `<td id="elapsed-${i}" style="font-size:.68rem;color:var(--mid)">—</td>`;
+    tr.innerHTML = cells;
+    tbody.appendChild(tr);
+  });
+  document.getElementById('rec-count').textContent = recipients.length;
+  document.getElementById('table-section').style.display = '';
+}
 
-    function togglePlay() {
-      if (isPlaying) {
-        audio.pause();
-        playBtn.textContent = '▶';
-        visualizer.style.display = 'none';
+// ── Preview ───────────────────────────────────────────────────────────────────
+function renderPreview() {
+  const tpl = document.getElementById('msg').value;
+  const sec = document.getElementById('preview-section');
+  const lst = document.getElementById('preview-list');
+  if (!tpl.trim() || !recipients.length) { sec.style.display = 'none'; return; }
+  lst.innerHTML = '';
+  recipients.slice(0,3).forEach((row, i) => {
+    const msg  = personalise(tpl, row);
+    const mob  = normMobile(row[mobileCol] || '');
+    const name = row[nameCol] || `Recipient ${i+1}`;
+    const d    = document.createElement('div');
+    d.className = 'preview-card';
+    d.innerHTML = `<div class="preview-meta">#${i+1} · ${esc(name)} · ${esc(mob)}</div>
+                   <div class="preview-msg">${esc(msg)}</div>`;
+    lst.appendChild(d);
+  });
+  if (recipients.length > 3) {
+    const m = document.createElement('div');
+    m.className = 'preview-more';
+    m.textContent = `… and ${recipients.length - 3} more recipients`;
+    lst.appendChild(m);
+  }
+  sec.style.display = '';
+}
+
+// ── Send ──────────────────────────────────────────────────────────────────────
+async function sendSMS() {
+  const tpl = document.getElementById('msg').value.trim();
+  const url = getUrl();
+  const key = getKey();
+
+  if (!tpl)            { showAlert('Please enter a message.', 'error'); return; }
+  if (!recipients.length) { showAlert('Please upload recipients.', 'error'); return; }
+  if (!url)            { showAlert('Please enter the Supabase function URL.', 'error'); return; }
+  if (!key)            { showAlert('Please enter your publishable key.', 'error'); return; }
+
+  const payload = {
+    action: 'send',
+    template: tpl,
+    recipients: recipients.map((row, i) => ({
+      index:   i,
+      mobile:  normMobile(row[mobileCol] || ''),
+      message: personalise(tpl, row),
+    }))
+  };
+
+  const btn = document.getElementById('send-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<span class="spinner"></span> Sending…';
+
+  recipients.forEach((_, i) => setBadge(i, 'sending', '⏳ Sending…'));
+
+  document.getElementById('progress-wrap').style.display = '';
+  document.getElementById('log').style.display = '';
+  document.getElementById('log-body').innerHTML = '';
+  document.getElementById('stats-row').style.display = '';
+  logCount = 0;
+  resetStats();
+
+  sendStart = Date.now();
+  setProgress(0, `0 / ${recipients.length} sent`);
+
+  try {
+    const r = await fetch(url, {
+      method:  'POST',
+      headers: {
+        'Content-Type':  'application/json',
+        'Authorization': `Bearer ${key}`,
+        'apikey':        key,
+      },
+      body: JSON.stringify(payload)
+    });
+    const data = await r.json();
+    processResults(data);
+  } catch(e) {
+    showAlert('Request failed: ' + e, 'error');
+    logEntry('✗','err','Request failed', String(e), '—','—');
+    recipients.forEach((_,i) => setBadge(i,'fail','✗ Error'));
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Send SMS to All Recipients';
+    const elapsed = ((Date.now() - sendStart)/1000).toFixed(1);
+    document.getElementById('log-elapsed').textContent = `Total: ${elapsed}s`;
+    setProgress(100,'Done');
+  }
+}
+
+function processResults(data) {
+  let ok=0, fail=0, other=0;
+  const rows = data.responses || [];
+  const now  = new Date();
+
+  if (data['response-description'] && !rows.length) {
+    logEntry('✗','err','API Error',
+      `${data['response-description']} (code ${data['response-code']})`, '—','—');
+    recipients.forEach((_,i) => setBadge(i,'fail','✗ API Error'));
+    setStats(recipients.length, 0, recipients.length, 0);
+    return;
+  }
+
+  rows.forEach((r, i) => {
+    const code    = r['response-code'];
+    const desc    = r['response-description'] || 'Unknown';
+    const mob     = r.mobile || '';
+    const mid     = r.messageid || '';
+    const elapsed = ((Date.now() - sendStart)/1000).toFixed(2) + 's';
+    const ts      = now.toISOString().replace('T',' ').slice(0,19) + ' UTC';
+
+    setProgress(Math.round(((i+1)/rows.length)*100), `${i+1} / ${rows.length} processed`);
+
+    const saEl = document.getElementById(`sent-at-${i}`);
+    const elEl = document.getElementById(`elapsed-${i}`);
+    if (saEl) saEl.textContent = ts;
+    if (elEl) elEl.textContent = elapsed;
+
+    if (code === 200) {
+      ok++;
+      setBadge(i,'ok','✓ Sent');
+      logEntry('✓','ok', mob, `Delivered · MsgID: ${mid}`, ts, elapsed);
+    } else {
+      const blocked = desc.toLowerCase().includes('blacklist') || desc.toLowerCase().includes('blocked');
+      if (blocked || [1001,1003,1006,1007].includes(code)) {
+        fail++;
+        setBadge(i,'fail','✗ ' + shortD(desc));
+        logEntry('✗','err', mob, `${desc} (${code})`, ts, elapsed);
       } else {
-        audio.play().catch(e => {
-          console.log('Playback failed:', e);
-          showNotification('Click to enable audio playback');
-        });
-        playBtn.textContent = '⏸';
-        visualizer.style.display = 'flex';
+        other++;
+        setBadge(i,'other','⏳ ' + shortD(desc));
+        logEntry('?','inf', mob, `${desc} (${code})`, ts, elapsed);
       }
-      isPlaying = !isPlaying;
-      updateMediaSession();
     }
+  });
 
-    // Volume control
-    volumeSlider.addEventListener('input', function() {
-      audio.volume = this.value / 100;
+  setStats(ok+fail+other, ok, fail, other);
+}
+
+// ── Balance ───────────────────────────────────────────────────────────────────
+async function fetchBalance() {
+  const url = getUrl(), key = getKey();
+  if (!url || !key) { showAlert('Enter the function URL and publishable key first.', 'error'); return; }
+  const btn = document.getElementById('balance-btn');
+  btn.textContent = '⟳ Fetching…';
+  try {
+    const r = await fetch(url, {
+      method:  'POST',
+      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${key}`, 'apikey': key },
+      body:    JSON.stringify({ action: 'balance' })
     });
+    const d = await r.json();
+    btn.textContent = d.credit !== undefined
+      ? `💳 ${d.credit} credits`
+      : '⚠ ' + (d['response-description'] || d.error || 'Error');
+  } catch(e) {
+    btn.textContent = '⚠ Failed';
+  }
+}
 
-    // Audio event listeners
-    audio.addEventListener('loadstart', () => {
-      document.getElementById('connectionStatus').textContent = '○ CONNECTING...';
-    });
+// ── Helpers ───────────────────────────────────────────────────────────────────
+function shortD(d) { return d.length > 22 ? d.slice(0,20)+'…' : d; }
 
-    audio.addEventListener('canplay', () => {
-      document.getElementById('connectionStatus').textContent = '● LIVE';
-    });
+function setBadge(i, type, label) {
+  const el = document.getElementById(`badge-${i}`);
+  if (!el) return;
+  el.textContent = label;
+  el.className   = 'badge';
+  if (type === 'ok')      el.classList.add('badge-ok');
+  if (type === 'fail')    el.classList.add('badge-fail');
+  if (type === 'other')   el.classList.add('badge-other');
+  if (type === 'sending') el.classList.add('badge-sending');
+}
 
-    audio.addEventListener('error', () => {
-      document.getElementById('connectionStatus').textContent = '× ERROR';
-      showNotification('Connection failed. Retrying...');
-      setTimeout(() => audio.load(), 3000);
-    });
+function setProgress(pct, lbl) {
+  document.getElementById('prog-inner').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = lbl;
+}
 
-    // Widget controls
-    function toggleWidget() {
-      if (!isFloating) {
-        createFloatingWidget();
-      } else {
-        closeFloatingWidget();
-      }
-    }
+function resetStats() {
+  ['s-total','s-ok','s-fail','s-other'].forEach(id =>
+    document.getElementById(id).textContent = '0');
+}
+function setStats(t,ok,f,o) {
+  document.getElementById('s-total').textContent = t;
+  document.getElementById('s-ok').textContent    = ok;
+  document.getElementById('s-fail').textContent  = f;
+  document.getElementById('s-other').textContent = o;
+}
 
-    function createFloatingWidget() {
-      const features = 'width=300,height=120,top=50,left=' + (screen.width - 350) + 
-                      ',resizable=no,scrollbars=no,status=no,menubar=no,toolbar=no';
-      
-      try {
-        popupWindow = window.open('', 'ClassicFMWidget', features);
-        if (popupWindow) {
-          popupWindow.document.write(generateFloatingWidgetHTML());
-          popupWindow.document.close();
-          isFloating = true;
-          
-          // Transfer audio to popup
-          const popupAudio = popupWindow.document.getElementById('popupAudio');
-          popupAudio.src = audio.src;
-          if (isPlaying) {
-            popupAudio.play();
-            audio.pause();
-          }
-          
-          // Sync controls
-          syncWithPopup(popupWindow);
-          
-          // Handle popup close
-          popupWindow.addEventListener('beforeunload', () => {
-            isFloating = false;
-            if (isPlaying) {
-              audio.play();
-            }
-          });
-          
-          showNotification('Widget detached! Now playing in separate window.');
-        } else {
-          showNotification('Please allow popups for persistent widget');
-        }
-      } catch (e) {
-        showNotification('Popup blocked. Please allow popups for widget functionality.');
-      }
-    }
+function logEntry(icon, cls, title, detail, ts, elapsed) {
+  logCount++;
+  const div = document.createElement('div');
+  div.className = 'log-row';
+  div.innerHTML = `
+    <span class="log-num">${logCount}</span>
+    <div>
+      <span class="log-title ${cls}">${icon} ${esc(title)}</span>
+      <span class="log-detail">${esc(detail)}</span>
+    </div>
+    <div class="log-time">${esc(ts)}<br/>${esc(elapsed)}</div>`;
+  const body = document.getElementById('log-body');
+  body.appendChild(div);
+  body.scrollTop = body.scrollHeight;
+}
 
-    function closeFloatingWidget() {
-      if (popupWindow && !popupWindow.closed) {
-        popupWindow.close();
-      }
-      isFloating = false;
-    }
+function esc(t) {
+  return String(t)
+    .replace(/&/g,'&amp;').replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
 
-    function toggleAlwaysOnTop() {
-      if (popupWindow && !popupWindow.closed) {
-        popupWindow.focus();
-        showNotification('Widget brought to front (stay-on-top depends on browser)');
-      } else {
-        showNotification('Create floating widget first');
-      }
-    }
+function updateSendBtn() {
+  const ok = recipients.length > 0 && document.getElementById('msg').value.trim().length > 0;
+  document.getElementById('send-btn').disabled = !ok;
+}
 
-    function minimizeWidget() {
-      if (popupWindow && !popupWindow.closed) {
-        popupWindow.blur();
-      } else {
-        window.blur();
-      }
-    }
-
-    function closeWidget() {
-      if (confirm('Close Classic 105 FM widget?')) {
-        audio.pause();
-        if (popupWindow && !popupWindow.closed) {
-          popupWindow.close();
-        }
-        window.close();
-      }
-    }
-
-    // PWA Setup
-    function setupPWA() {
-      if ('serviceWorker' in navigator) {
-        const swCode = `
-          self.addEventListener('install', () => self.skipWaiting());
-          self.addEventListener('activate', () => self.clients.claim());
-          self.addEventListener('fetch', (e) => {
-            if (e.request.url.includes('audio') || e.request.url.includes('stream')) {
-              e.respondWith(fetch(e.request));
-            }
-          });
-        `;
-        
-        const blob = new Blob([swCode], { type: 'application/javascript' });
-        const swUrl = URL.createObjectURL(blob);
-        
-        navigator.serviceWorker.register(swUrl);
-      }
-
-      // Install prompt
-      window.addEventListener('beforeinstallprompt', (e) => {
-        e.preventDefault();
-        showInstallPrompt(e);
-      });
-    }
-
-    function showInstallPrompt(deferredPrompt) {
-      const installBtn = document.createElement('button');
-      installBtn.textContent = '📱 Install App';
-      installBtn.className = 'btn';
-      installBtn.style.position = 'fixed';
-      installBtn.style.bottom = '80px';
-      installBtn.style.right = '20px';
-      installBtn.style.zIndex = '10001';
-      
-      installBtn.addEventListener('click', () => {
-        deferredPrompt.prompt();
-        deferredPrompt.userChoice.then((choiceResult) => {
-          if (choiceResult.outcome === 'accepted') {
-            showNotification('Thanks for installing Classic 105 FM!');
-          }
-          installBtn.remove();
-        });
-      });
-      
-      document.body.appendChild(installBtn);
-      setTimeout(() => installBtn.remove(), 10000);
-    }
-
-    // Media Session API
-    function setupMediaSession() {
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.metadata = new MediaMetadata({
-          title: 'Classic 105 FM',
-          artist: 'Kenya\'s Classic Hits',
-          album: 'Live Radio',
-          artwork: [
-            { src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0iI2ZmNjYwMCI+PGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMTgiIGZpbGw9IiNmZjY2MDAiLz48cGF0aCBkPSJNMTIgMTIsMTIsMjQuMTYsMjI0LjE2LDIyLDI0LjE2LDIyLDRTMjItMTIsMTIsMTJaIiBmaWxsPSIjZmY2NjAwIi8+PHBhdGggZD0iTTIyLDkuNjQsMjIsMTc4TDExLjM2LDM2TDguNjQsMjIsOS42NCIgZmlsbD0iI2ZmNjYwMCIvPjwvc3ZnPg==', sizes: '48x48', type: 'image/svg+xml' }
-          ]
-        });
-
-        navigator.mediaSession.setActionHandler('play', () => togglePlay());
-        navigator.mediaSession.setActionHandler('pause', () => togglePlay());
-      }
-    }
-
-    function updateMediaSession() {
-      if ('mediaSession' in navigator) {
-        navigator.mediaSession.playbackState = isPlaying ? 'playing' : 'paused';
-      }
-    }
-
-    // Utility functions
-    function showNotification(message) {
-      if ('Notification' in window && Notification.permission === 'granted') {
-        new Notification('Classic 105 FM', { body: message, icon: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDgiIGhlaWdodD0iNDgiIHZpZXdCb3g9IjAgMCA0OCA0OCIgZmlsbD0iI2ZmNjYwMCI+PGNpcmNsZSBjeD0iMjQiIGN5PSIyNCIgcj0iMTgiIGZpbGw9IiNmZjY2MDAiLz48L3N2Zz4=' });
-      } else if ('Notification' in window) {
-        Notification.requestPermission();
-      }
-    }
-
-    function checkPopupSupport() {
-      // Request notification permission
-      if ('Notification' in window && Notification.permission === 'default') {
-        Notification.requestPermission();
-      }
-    }
-
-    function generateFloatingWidgetHTML() {
-      return `
-        <!DOCTYPE html>
-        <html>
-        <head>
-          <title>Classic 105 FM Widget</title>
-          <style>
-            body { 
-              margin: 0; 
-              background: rgba(34,34,34,0.95); 
-              color: white; 
-              font-family: 'Segoe UI', sans-serif;
-              display: flex;
-              align-items: center;
-              height: 100vh;
-              padding: 10px;
-              backdrop-filter: blur(20px);
-            }
-            .mini-player { 
-              display: flex; 
-              align-items: center; 
-              gap: 12px;
-              width: 100%;
-            }
-            .mini-logo { 
-              width: 40px; 
-              height: 40px; 
-              background: #ff6600; 
-              border-radius: 8px; 
-              display: flex; 
-              align-items: center; 
-              justify-content: center; 
-              font-weight: bold;
-              font-size: 14px;
-            }
-            .mini-info { 
-              flex: 1; 
-            }
-            .mini-title { 
-              font-size: 13px; 
-              font-weight: 600; 
-              margin-bottom: 2px;
-            }
-            .mini-status { 
-              font-size: 11px; 
-              opacity: 0.7; 
-            }
-            .mini-controls { 
-              display: flex; 
-              gap: 8px; 
-            }
-            .mini-btn { 
-              background: rgba(255,255,255,0.2); 
-              border: none; 
-              color: white; 
-              width: 32px; 
-              height: 32px; 
-              border-radius: 6px; 
-              cursor: pointer;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-            }
-            .mini-btn:hover { 
-              background: rgba(255,255,255,0.3); 
-            }
-          </style>
-        </head>
-        <body>
-          <div class="mini-player">
-            <div class="mini-logo">105</div>
-            <div class="mini-info">
-              <div class="mini-title">Classic 105 FM</div>
-              <div class="mini-status">● LIVE</div>
-            </div>
-            <div class="mini-controls">
-              <button class="mini-btn" onclick="toggleMiniPlay()" id="miniPlayBtn">▶</button>
-              <button class="mini-btn" onclick="window.close()">×</button>
-            </div>
-          </div>
-          <audio id="popupAudio" preload="none">
-            <source src="https://stream.zeno.fm/0r0xa792kwzuv" type="audio/mpeg">
-          </audio>
-          <script>
-            let miniPlaying = ${isPlaying};
-            const miniAudio = document.getElementById('popupAudio');
-            const miniPlayBtn = document.getElementById('miniPlayBtn');
-            
-            function toggleMiniPlay() {
-              if (miniPlaying) {
-                miniAudio.pause();
-                miniPlayBtn.textContent = '▶';
-              } else {
-                miniAudio.play();
-                miniPlayBtn.textContent = '⏸';
-              }
-              miniPlaying = !miniPlaying;
-            }
-            
-            if (${isPlaying}) {
-              miniAudio.play();
-              miniPlayBtn.textContent = '⏸';
-            }
-          </script>
-        </body>
-        </html>
-      `;
-    }
-
-    function syncWithPopup(popup) {
-      // Keep popup alive
-      setInterval(() => {
-        if (popup.closed) {
-          isFloating = false;
-        }
-      }, 1000);
-    }
-
-    // Prevent accidental closes
-    window.addEventListener('beforeunload', (e) => {
-      if (isPlaying) {
-        e.preventDefault();
-        e.returnValue = 'Radio is still playing. Are you sure you want to leave?';
-        return e.returnValue;
-      }
-    });
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
-      if (e.code === 'Space') {
-        e.preventDefault();
-        togglePlay();
-      } else if (e.code === 'Escape') {
-        if (document.fullscreenElement) {
-          document.exitFullscreen();
-        }
-      }
-    });
-
-    // Auto-reconnect on network change
-    window.addEventListener('online', () => {
-      if (isPlaying && audio.paused) {
-        audio.load();
-        audio.play();
-        showNotification('Reconnected to Classic 105 FM');
-      }
-    });
-
-    window.addEventListener('offline', () => {
-      showNotification('Connection lost. Will reconnect when online.');
-    });
-  </script>
+// ── Drag-and-drop ──────────────────────────────────────────────────────────────
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', ()=> dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag');
+  const fi = document.getElementById('file-input');
+  fi.files = e.dataTransfer.files;
+  handleFile(fi);
+});
+</script>
 </body>
 </html>
