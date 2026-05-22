@@ -622,11 +622,7 @@ async function sendSMS() {
   try {
     const r = await fetch(url, {
       method:  'POST',
-      headers: {
-        'Content-Type':  'application/json',
-        'Authorization': `Bearer ${key}`,
-        'apikey':        key,
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload)
     });
     const data = await r.json();
@@ -702,7 +698,7 @@ async function fetchBalance() {
   try {
     const r = await fetch(url, {
       method:  'POST',
-      headers: { 'Content-Type':'application/json', 'Authorization':`Bearer ${key}`, 'apikey': key },
+      headers: { 'Content-Type': 'application/json' },
       body:    JSON.stringify({ action: 'balance' })
     });
     const d = await r.json();
